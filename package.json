@@ -1,0 +1,8 @@
+{
+  "name": "tmxtools",
+  "version": "0.1.0",
+  "main": "main.js",
+  "devDependencies": {
+    "electron-windows-installer": "^1.4.4"
+  }
+}
