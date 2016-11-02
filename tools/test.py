@@ -1,6 +1,5 @@
 #coding=utf-8
 import anltmx
-from lxml import etree
 import hashlib
 import os
 import sys
@@ -12,12 +11,12 @@ def getMd5(sentence):
 	md5.update(sentence)
 	return md5.hexdigest()
 
-def rmInDupGetMd5(allsentences,md5dict):
+def rmInDupGetMd5(allsentences,md5dict,splitmark="###T###"):
 	indup = []
 	try:
 		for sentence in allsentences:
-			line1 = sentence.split("###T###")[0]
-			line2 = sentence.split("###T###")[1]
+			line1 = sentence.split(splitmark)[0]
+			line2 = sentence.split(splitmark)[1]
 			line1 = line1.strip()
 			line2 = line2.strip()
 			for i in line1,line2:
@@ -29,25 +28,23 @@ def rmInDupGetMd5(allsentences,md5dict):
 		pass
 
 
-def writeMd5(md5dict):
+def writeMd5(md5dict,tarfile):
 	for key in md5dict.keys():
-		with open("../tmpmd5/" + key + '.txt','w') as wt:
+		with open(  tarfile + "/" + key + '.txt','a') as wt:
 			fin = list(set(md5dict[key]))
 			wt.writelines(fin)
 
-def reOutDupMd5(md5dict):
+def reOutDupMd5(md5dict,md5repo):
 	for key in md5dict.keys():
 
 		totalmd5 = None
 		dupmd5 = []
-		with open("../allMd5/" + key ,'r') as rd:
+		with open( md5repo + "/" + key ,'r') as rd:
 			totalmd5 =  set(rd.readlines())
 		dupmd5 = list(set(md5dict[key]) & totalmd5)
 		md5dict[key] = dupmd5
 
 	return md5dict
-		# with open("../tmpmd5/" + key + ".txt",'w') as wt:
-		# 	wt.writelines(dupmd5)
 
 md5dict = {"0":[],
 		   "1":[],
@@ -67,43 +64,39 @@ md5dict = {"0":[],
 		   "f":[]
 		   }
 
-if __name__ == '__main__':
-	allsentences = []
-	dir = []
-	for p,c,filenames in os.walk("../soufile"):
-		for filename in filenames:
-			if filename.endswith(".tmx"):
-				dir.append(os.path.join(p,filename))
-	for filename in dir:
-		print "doing : " + filename
-		allsentences += anltmx.anltmx(filename)
-	allsentences = list(set(allsentences))
-	rmInDupGetMd5(allsentences,md5dict)
-	writeMd5(md5dict)
-	reOutDupMd5(md5dict)
+def readtxt(filename):
+	with open(filename,'r') as f:
+		return f.readlines()
 
-	for filename in dir:
-		art = anltmx.anltmx(filename)
-		dup = []
-		tar = []
-		for sentence in art:
-			line1 = sentence.split("###T###")[0]
-			line2 = sentence.split("###T###")[1]
-			line1 = line1.strip()
-			line2 = line2.strip()
-			md5 = getMd5(line1) + "\n"
-			if md5 in md5dict[md5[0]]:
-				dup.append(sentence)
-				continue
-			md5 = getMd5(line2)
-			if md5 in md5dict[md5[0]]:
-				dup.append(sentence)
-				continue
 
-			tar.append(sentence)
+def redup(sentencelist,md5dict,splitmark="###T###"):
+	dup = []
+	tar = []
+	for sentence in sentencelist:
+		line1 = sentence.split(splitmark)[0]
+		line2 = sentence.split(splitmark)[1]
+		line1 = line1.strip()
+		line2 = line2.strip()
+		md5 = getMd5(line1) + "\n"
+		if md5 in md5dict[md5[0]]:
+			dup.append(sentence)
+			continue
+		md5 = getMd5(line2)
+		if md5 in md5dict[md5[0]]:
+			dup.append(sentence)
+			continue
 
-		with open(filename.replace("soufile","tarfile").replace(".tmx",".txt"),'w') as wt:
-			wt.writelines(list(set(tar)))
+		tar.append(sentence)
+	return [list(set(tar)),dup]
 
-		with open(filename.replace("soufile","dupfile").replace(".tmx",".txt"),'w') as wt:
-			wt.writelines(dup)
+
+def writetxt(sentencelist,tarfile,size):
+	size = int(size)
+	if size < 1:
+		size = 1
+	if size > 400000:
+		size = 400000
+	count = len(sentencelist)/size
+	for i in range(0,count+1):
+		with open(tarfile + str(count) + ".txt") as f:
+			f.writelines(sentencelist[count*size:count*size+size])

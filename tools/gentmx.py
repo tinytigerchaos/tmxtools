@@ -6,7 +6,7 @@ class GenTmx(object):
 		tmp = str(datetime.datetime.now())
 		self.time = tmp[0:4] + tmp[5:7] + tmp[8:10] + "T" + tmp[11:13] + tmp[14:16] + tmp[17:19] + "Z"
 
-	def gentmx(self,adminlang,srclang,direction=[],sentences=[]):
+	def gentmx(self,adminlang,srclang,direction=[],sentences=[],splitmark="###T###"):
 		doc = Document()
 		tmx = doc.createElement("tmx")
 		tmx.setAttribute("version","1.4")
@@ -17,21 +17,17 @@ class GenTmx(object):
 		header.setAttribute("srclang",srclang)
 		header.setAttribute("datatype","rtf")
 		header.setAttribute("creationdate",self.time)
-		header.setAttribute("creationid","TM STUDIO")
+		header.setAttribute("creationid","TMXMALL TOOLS")
+
 		tmx.appendChild(header)
-
-
-
 		body = doc.createElement('body') #创建根元素
 		tmx.appendChild(body)
-
-
 
 		for sentence in sentences:
 			tu_element = doc.createElement('tu')
 			tu_element.setAttribute('creationdate', self.time)
 			tu_element.setAttribute("creationid", "TM STUDIO")
-			line = sentence.split("###T###")
+			line = sentence.split(splitmark)
 			body.appendChild(tu_element)
 
 			tuv1 = doc.createElement('tuv')
@@ -54,17 +50,16 @@ class GenTmx(object):
 
 		return doc
 
-########### 将DOM对象doc写入文件
-
-if __name__ == '__main__':
-	size = 400000
-	sen = []
-	with open("../tarfile/234txt","r") as f:
-		sen = f.readlines()
+def txttotmx(size,srclang,tarlang,sen,tarfile,splitmark):
+	size = int(size)
+	if size < 1:
+		return
+	if size >= 400000:
+		size = 400000
 	count = len(sen)/size
 
 	for i in range(0,count+1):
-		with open("../tmx/" + str(i) + ".tmx","w") as f:
+		with open(tarfile + str(i) + ".tmx","w") as f:
 			fin = sen[ count*size : count*size + size]
 			gen = GenTmx()
-			f.write(gen.gentmx("1","2",["ZH-CN","EN-US"],fin).toprettyxml(indent = ''))
+			f.write(gen.gentmx(srclang,srclang,[srclang,tarlang],fin,splitmark).toprettyxml(indent = ''))
