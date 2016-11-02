@@ -6,6 +6,7 @@ __pycache__/
 *.so
 .idea
 
+
 # Distribution / packaging
 .Python
 env/
@@ -87,3 +88,10 @@ ENV/
 
 # Rope project settings
 .ropeproject
+tmpmd5/
+allMd5/
+tmx/
+gui/
+dupfile/
+soufile/
+tarfile/
