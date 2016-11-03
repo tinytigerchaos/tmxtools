@@ -6,8 +6,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap-theme.css">
+	<link rel="stylesheet" href="./fe/render.css">
 
 	<script type="text/javascript" src="./node_modules/requirejs/require.js"></script>
 </head>
@@ -19,12 +20,12 @@
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
       			</button>
-				<a class="navbar-brand" href="#">Tmxmall Tolls</a>
+				<span class="logo"></span>
+				<a class="navbar-brand" href="#">Tmxmall Tools</a>
 			</div>
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
@@ -57,7 +58,7 @@
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">功能选择 <span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
 							<li class="tmx2txt-action"><a href="#">Tmx 2 Txt</a></li>
-							<li><a href="#">Txt 2 Tmx</a></li>
+							<li class="txt2tmx-action"><a href="#">Txt 2 Tmx</a></li>
 							<li><a href="#">Something else here</a></li>
 							<li class="divider"></li>
 							<li><a href="#">Separated link</a></li>
@@ -110,6 +111,93 @@
 								</div>
 							</div>
 
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">分割符：</label>
+								<div class="col-sm-8">
+									<div class="radio">
+										<label>
+											<input type="radio" name="optionsRadios" id="checkboxWarning" value="1">
+											Tab键分割
+										</label>
+									</div>
+
+									<div class="radio">
+										<label>
+											<input type="radio" name="optionsRadios" id="checkboxWarning" value="2">
+											其他字符
+										</label>
+
+										<input type="text" class="form-control" id="tabkey">
+
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="" class="col-sm-2"> </label>
+								<div class="col-sm-8">
+									<a href="#" class="btn btn-primary confirm-btn" role="button">开始</a>
+								</div>
+							</div>
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+		<!--txt2tmx-->
+		<div class="row hidden txt2tmx tools">
+			<div class="col-md-8 col-md-offset-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Txt转换为Tmx</h3>
+					</div>
+					<div class="panel-body">
+						<form role="form" class="form-horizontal">
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">选择Txt文件：</label>
+								<div class="col-sm-8">
+									<input type="text" id="" class="form-control src-file-name">
+								</div>
+								<div class="col-sm-2">
+									<button class="btn btn-default choose-src-file">选择</button>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">选择Tmx文件：</label>
+								<div class="col-sm-8">
+									<input type="text" id="" class="form-control tgt-file-name">
+								</div>
+								<div class="col-sm-2">
+									<button class="btn btn-default choose-tgt-file">选择</button>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">源语言：</label>
+								<div class="col-sm-8">
+									<select name="" id="" class="form-control">
+										<option value="zh">中文</option>
+										<option value="en">英文</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">目标语言：</label>
+								<div class="col-sm-8">
+									<select name="" id="" class="form-control">
+										<option value="zh">中文</option>
+										<option value="en">英文</option>
+									</select>
+								</div>
+							</div>
+							
 							<div class="form-group">
 								<label for="" class="col-sm-2 control-label">分割符：</label>
 								<div class="col-sm-8">
