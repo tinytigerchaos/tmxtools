@@ -1,11 +1,17 @@
+#coding=utf-8
 import tornado.web
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
-from tools import gentmx
+from simple_tools import logger
+import datetime
+
 from tools import anltmx
+from tools import gentmx
 from tools import merge
 from tools import test
 
+
+mylogger = logger("TmxmallTools","TmxmallTools.log").log()
 # parm:size:单个目标文件大小（1到400000条） srcpath:源文件路径 tgtpath：目标路径 srclang：源语言 tarlang：目标语言 splitmark：txt文件分隔符
 # 将源文件生成tmx文件存放在目标目录
 #res：null
@@ -22,7 +28,8 @@ class TxtToTmx(tornado.web.RequestHandler):
 			gentmx.txttotmx(size,srclang,tarlang,srcpath,tgtpath,splitmark)
 			return
 		except EOFError, e:
-			print e.message
+			mylogger.warning("[TxtToTmx] : " + e.message)
+		return
 #parm：size:单个目标文件大小（1到400000条） srcpath:源文件路径 tgtpath：目标路径 splitmark：txt文件分隔符null
 #将源tmx文件生成txt文件存放到目标路径
 #res：
@@ -43,8 +50,8 @@ class TmxToTxt(tornado.web.RequestHandler):
 			anltmx.tmxtotxt(size,srcpath,tgtpath,splitmark)
 			return
 		except EOFError, e:
-			print e.message
-			return
+			mylogger.warning("[TmxToTxt] : " + e.message)
+		return
 #parm：srcpath:源文件路径 tgtpath：目标路径
 #从源文件生成一个MD5仓库到目标文件
 #res：null
@@ -56,10 +63,11 @@ class GenMd5Repo(tornado.web.RequestHandler):
 			if srcpath.endswith(".txt"):
 				test.writeMd5(test.rmInDupGetMd5(test.readtxt(srcpath), test.md5dict),tgtpath)
 				return
-			test.writeMd5(test.rmInDupGetMd5(anltmx.anltmx(srcpath),test.md5dict),tgtpath)
+			test.writeMd5(test.rmInDupGetMd5(anltmx.anltmx(srcpath)[0],test.md5dict),tgtpath)
 			return
 		except EOFError,e:
-			print e.message
+			mylogger.warning("[GenMd5Repo] : " + e.message)
+		return
 # parm：tmpmdrepo：临时MD5存放仓库 localmd5repo：本地md5仓库
 #讲临时仓库与本地仓库的MD5合并并存放在本地MD5仓库
 #res：
@@ -70,7 +78,8 @@ class MergeMd5(tornado.web.RequestHandler):
 			localmd5repo = self.get_argument("localmd5repo")
 			merge.mergemd5(tmpmd5repo,localmd5repo)
 		except EOFError, e:
-			print e.message
+			mylogger.warning("[MergeMd5] : " + e.message)
+		return
 
 
 #parm：filename：目标文件 filetype：生成文件类型（tmx/txt） size：单个文件句对数 localmd5repo：本地MD5仓库 tmpmd5repo：临时MD5存放仓库 tgtpath：去重文件存放路径
@@ -118,14 +127,32 @@ class FileReOutDup(tornado.web.RequestHandler):
 
 
 		except EOFError,e:
-			print e.message
+			mylogger.warning("[FileReOutDup] : " + e.message)
+		return
+
+class Test(tornado.web.RequestHandler):
+	def get(self):
+		self.write(test.hello)
+		return
+
+class Quit(tornado.web.RequestHandler):
+	def get(self):
+		mylogger.info("[process stop :] " + str(datetime.datetime.now()))
+		IOLoop.current().stop()
+		IOLoop.current().close()
+		return
+
+
+
 
 app = tornado.web.Application({
 	(r"/tmxtotxt",TmxToTxt),
 	(r"/txttotmx",TxtToTmx),
 	(r"/mergemd5",MergeMd5),
 	(r"/genmd5repo",GenMd5Repo),
-	(r"/filereoutdup",FileReOutDup)
+	(r"/filereoutdup",FileReOutDup),
+	(r"/",Test),
+	(r"/quit",Quit)
 
 })
 

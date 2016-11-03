@@ -1,6 +1,8 @@
 #coding=utf-8
 import xml.sax
 import sys
+from xml.sax import SAXParseException
+
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
 senlist = []

@@ -6,6 +6,8 @@ import sys
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
 
+hello = "hello"
+
 def getMd5(sentence):
 	md5 = hashlib.md5()
 	md5.update(sentence)
@@ -39,7 +41,7 @@ def reOutDupMd5(md5dict,md5repo):
 
 		totalmd5 = None
 		dupmd5 = []
-		with open( md5repo + "/" + key ,'r') as rd:
+		with open( md5repo + "/" + key + ".txt" ,'r') as rd:
 			totalmd5 =  set(rd.readlines())
 		dupmd5 = list(set(md5dict[key]) & totalmd5)
 		md5dict[key] = dupmd5
