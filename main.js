@@ -1,6 +1,8 @@
 const {app, BrowserWindow} = require('electron')
-const {dialog} = require('electron')
-var path = require('path');
+const electron = require('electron')
+const path = require('path');
+const http = require('http');
+const dialog = electron.dialog;
 
 var childProcess = require('child_process');
 // Keep a global reference of the window object, if you don't, the window will
@@ -9,7 +11,7 @@ let win
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600})
+  win = new BrowserWindow({width: 1200, height: 600})
 
   // and load the index.html of the app.
   win.loadURL(`file://${__dirname}/index.html`)
@@ -17,18 +19,11 @@ function createWindow () {
   // Open the DevTools.
   win.webContents.openDevTools()
 
-  win.on('app-command',function (e, cmd){
-    if (cmd == "S+D"){
-      var sourcefilepath = dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']})
-      console.log(sourcefilepath)
+ // TODO: 注册全局快捷键
 
-      // childProcess.exec('python test.py -t' + sourcefilepath , function(err, stdout){
+ // 开始python webContents服务
 
-
-
-      // })
-    }
-  })
+//  childProcess.exec('./python/pyth')
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -72,14 +67,49 @@ app.on('activate', () => {
 
 var ipcMain = require('electron').ipcMain;
 
-ipcMain.on('triggerAction', function(event, param){
-    console.log(param);
+/**
+ * 监听页面选择文件事件，打开文件选择框，发送文件名路劲
+ */
+ipcMain.on('choose-file', function(event, types, callbackName){
+    console.log(types);
+    console.log(callbackName);
 
-    // show dialog to get url path
-    var path;
-
-    // exec python script
-    childProcess.exec('python test.py', function(err, stdout){
-        console.log('done');
+    dialog.showOpenDialog({
+      title: '选择Tmx文件',
+      defaultPath: '',
+      filters: [
+          { name: 'Tmx文件', extensions: ['tmx'] },
+          { name: '所有文件', extensions: ['*'] }
+        ],
+      properties:['openFile']
+    }, function(filenames){
+      event.sender.send(callbackName, filenames);
     });
+})
+
+/**
+ * 监听前台文件选择，用户选择保存一个文件，需输入文件名
+ */
+ipcMain.on('save-file', function(event, callbackName){
+    console.log(callbackName);
+
+    dialog.showSaveDialog({
+      title: '选择Tmx文件',
+      defaultPath: ''
+    }, function(filenames){
+      event.sender.send(callbackName, filenames);
+    });
+})
+
+
+ipcMain.on('tmx2txt', function(event, params, callbackName){
+  var res = '';
+  // todo: 调用Python接口
+
+  // http.post('http://localhost:8888/tmxtotxt', options, function(res){
+
+  // })
+
+
+  event.sender.send(callbackName, res);
 })

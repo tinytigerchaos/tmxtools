@@ -1,4 +1,6 @@
+#coding=utf-8
 import tornado.web
+
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tools import gentmx
@@ -6,11 +8,20 @@ from tools import anltmx
 from tools import merge
 from tools import test
 
-# parm:size:单个目标文件大小（1到400000条） srcpath:源文件路径 tgtpath：目标路径 srclang：源语言 tarlang：目标语言 splitmark：txt文件分隔符
+
+# http://localhost:8888/tmxtotxt
+# params:
+# 	size:单个目标文件大小（1到400000条
+# 	srcpath:源文件路径
+#	tgtpath：目标路径
+#	srclang：源语言
+#	tarlang：目标语言
+#	splitmark：txt文件分隔符
 # 将源文件生成tmx文件存放在目标目录
-#res：null
+# Example 将tab键分割的文本数据转存为tmx文件，txt按行存储，每行以tab键分割
+# res：null
 class TxtToTmx(tornado.web.RequestHandler):
-	def get(self):
+	def post(self):
 		try:
 			size = self.get_argument("size")
 			tgtpath = self.get_argument("tgtpath")
@@ -20,9 +31,10 @@ class TxtToTmx(tornado.web.RequestHandler):
 			splitmark = self.get_argument("splitmark")
 			print splitmark
 			gentmx.txttotmx(size,srclang,tarlang,srcpath,tgtpath,splitmark)
-			return
+			return "kkkk" ## self.write("kkkkk")
 		except EOFError, e:
 			print e.message
+
 #parm：size:单个目标文件大小（1到400000条） srcpath:源文件路径 tgtpath：目标路径 splitmark：txt文件分隔符null
 #将源tmx文件生成txt文件存放到目标路径
 #res：
@@ -45,6 +57,7 @@ class TmxToTxt(tornado.web.RequestHandler):
 		except EOFError, e:
 			print e.message
 			return
+
 #parm：srcpath:源文件路径 tgtpath：目标路径
 #从源文件生成一个MD5仓库到目标文件
 #res：null
@@ -60,9 +73,10 @@ class GenMd5Repo(tornado.web.RequestHandler):
 			return
 		except EOFError,e:
 			print e.message
+
 # parm：tmpmdrepo：临时MD5存放仓库 localmd5repo：本地md5仓库
-#讲临时仓库与本地仓库的MD5合并并存放在本地MD5仓库
-#res：
+# 讲临时仓库与本地仓库的MD5合并并存放在本地MD5仓库
+# res：
 class MergeMd5(tornado.web.RequestHandler):
 	def get(self):
 		try:
@@ -71,7 +85,6 @@ class MergeMd5(tornado.web.RequestHandler):
 			merge.mergemd5(tmpmd5repo,localmd5repo)
 		except EOFError, e:
 			print e.message
-
 
 #parm：filename：目标文件 filetype：生成文件类型（tmx/txt） size：单个文件句对数 localmd5repo：本地MD5仓库 tmpmd5repo：临时MD5存放仓库 tgtpath：去重文件存放路径
 #parm：duppath：重复文件存放处   当文件为txt时需要  （splitmark：txt文件分隔符)   当文件为txt并生成文件为tmx时需要 srclang：txt文件源语言方向 tarlang：txt文件目标语言方向）
