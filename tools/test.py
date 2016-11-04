@@ -1,7 +1,5 @@
 #coding=utf-8
-import anltmx
 import hashlib
-import os
 import sys
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
@@ -100,5 +98,5 @@ def writetxt(sentencelist,tarfile,size):
 		size = 400000
 	count = len(sentencelist)/size
 	for i in range(0,count+1):
-		with open(tarfile + str(count) + ".txt") as f:
-			f.writelines(sentencelist[count*size:count*size+size])
+		with open(tarfile + str(i) + ".txt",'w') as f:
+			f.writelines(sentencelist[i*size:i*size+size])

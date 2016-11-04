@@ -1,16 +1,17 @@
 #coding=utf-8
 import tornado.web
-
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from simple_tools import logger
 import datetime
+import os
 
 from tools import anltmx
 from tools import gentmx
 from tools import merge
 from tools import test
-
+from tools import checkport
+from tools import changedirect
 
 mylogger = logger("TmxmallTools","TmxmallTools.log").log()
 # http://localhost:8888/tmxtotxt
@@ -25,7 +26,7 @@ mylogger = logger("TmxmallTools","TmxmallTools.log").log()
 # Example 将tab键分割的文本数据转存为tmx文件，txt按行存储，每行以tab键分割
 # res：null
 class TxtToTmx(tornado.web.RequestHandler):
-	def post(self):
+	def get(self):
 		try:
 			size = self.get_argument("size")
 			tgtpath = self.get_argument("tgtpath")
@@ -33,9 +34,9 @@ class TxtToTmx(tornado.web.RequestHandler):
 			tarlang = self.get_argument("tarlang")
 			srcpath = self.get_argument("srcpath")
 			splitmark = self.get_argument("splitmark")
-			print splitmark
-			gentmx.txttotmx(size,srclang,tarlang,srcpath,tgtpath,splitmark)
-			return "kkkk" ## self.write("kkkkk")
+			splitmark = "###T###"
+
+			gentmx.txttotmx(size,srclang,tarlang,test.readtxt(srcpath),tgtpath,splitmark)
 		except EOFError, e:
 
 			mylogger.warning("[TxtToTmx] : " + e.message)
@@ -121,8 +122,15 @@ class FileReOutDup(tornado.web.RequestHandler):
 				tarlang = anlresult[1][1]
 				splitmark = "###T###"
 			tmpmd5 = test.rmInDupGetMd5(sentencelist,test.md5dictsplitmark,)
-			test.writeMd5(tmpmd5,tmpmd5repo)
 			dupmd5 = test.reOutDupMd5(tmpmd5,localmd5repo)
+			dupmd5path = tmpmd5repo + "\dupmd5"
+			if os.path.exists(dupmd5path):
+				os.makedirs(dupmd5path)
+			tgtmd5path = tmpmd5repo + "\tgtmd5"
+			if os.path.exists(tgtmd5path):
+				os.makedirs(tgtmd5path)
+			test.writeMd5(list(set(tmpmd5)-set(dupmd5)), tgtmd5path)
+			test.writeMd5(dupmd5,dupmd5path)
 			result = test.redup(sentencelist,dupmd5,splitmark)
 			if filetype == "txt":
 				test.writetxt(result[0],tgtpath,size)
@@ -152,18 +160,46 @@ class Quit(tornado.web.RequestHandler):
 		IOLoop.current().stop()
 		IOLoop.current().close()
 		return
-
+# parm:
+#		filename:需要方向互换的文件
+#		filetype：文件类型（tmx：1，txt：0）
+#		splitmark：分隔符（仅txt文件需要）
+# res：null
+class FileRedirect(tornado.web.RequestHandler):
+	def get(self):
+		filename = self.get_argument("filename")
+		filetype = int(self.get_argument("filetype"))
+		if filetype == 1:
+			changedirect.changeDirect(filename,filetype)
+			print "finish"
+			return
+		splitmark = self.get_argument("splitmark")
+		splitmark = "###T###"
+		changedirect.changeDirect(filename,filetype,splitmark)
+		print "finish"
+		return
 app = tornado.web.Application({
 	(r"/tmxtotxt",TmxToTxt),
 	(r"/txttotmx",TxtToTmx),
 	(r"/mergemd5",MergeMd5),
 	(r"/genmd5repo",GenMd5Repo),
 	(r"/filereoutdup",FileReOutDup),
+	(r"/fileredirect",FileRedirect),
 	(r"/",Test),
 	(r"/quit",Quit)
 })
 
+def run(server,port):
+	server.listen(port)
+	with open("port.txt",'w') as f:
+		print port
+		f.write(str(port))
+	IOLoop.current().start()
+	return
+
 if __name__ == '__main__':
 	server = HTTPServer(app)
-	server.listen(8888)
-	IOLoop.current().start()
+	for port in range(12121,21212,30):
+		if checkport.IsOpen("127.0.0.1",port):
+			run(server,port)
+			break

@@ -17,7 +17,7 @@ class GenTmx(object):
 		header.setAttribute("srclang",srclang)
 		header.setAttribute("datatype","rtf")
 		header.setAttribute("creationdate",self.time)
-		header.setAttribute("creationid","TMXMALL TOOLS")
+		header.setAttribute("creationid","TMXMALLTOOLS")
 
 		tmx.appendChild(header)
 		body = doc.createElement('body') #创建根元素
@@ -26,10 +26,11 @@ class GenTmx(object):
 		for sentence in sentences:
 			tu_element = doc.createElement('tu')
 			tu_element.setAttribute('creationdate', self.time)
-			tu_element.setAttribute("creationid", "TM STUDIO")
+			tu_element.setAttribute("creationid", "TMXMALLTOOLS")
 			line = sentence.split(splitmark)
+			if len(line)<2:
+				continue
 			body.appendChild(tu_element)
-
 			tuv1 = doc.createElement('tuv')
 			tuv1.setAttribute("xml:lang",direction[0])
 			tu_element.appendChild(tuv1)
@@ -50,16 +51,16 @@ class GenTmx(object):
 
 		return doc
 
-def txttotmx(size,srclang,tarlang,sen,tarfile,splitmark):
+def txttotmx(size,srclang,tarlang,sen,tarfile,splitmark="###T###"):
 	size = int(size)
 	if size < 1:
 		return
 	if size >= 400000:
 		size = 400000
 	count = len(sen)/size
-
 	for i in range(0,count+1):
 		with open(tarfile + str(i) + ".tmx","w") as f:
-			fin = sen[ count*size : count*size + size]
+			fin = sen[ i*size : i*size + size]
 			gen = GenTmx()
 			f.write(gen.gentmx(srclang,srclang,[srclang,tarlang],fin,splitmark).toprettyxml(indent = ''))
+	return
