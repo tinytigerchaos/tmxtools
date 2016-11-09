@@ -13,7 +13,7 @@ define(['require', 'jquery'], function(require, $) {
 	var ipcRender = nodeRequire('electron').ipcRenderer;
 
     $('.txt2tmx-action').unbind('click').click(function () {
-        $('.tools').addClass('hidden');
+        $('.pythoncode').addClass('hidden');
 
         var txt2TmxContainer = $('.txt2tmx').removeClass('hidden');
         // 选择tmx文件路劲
