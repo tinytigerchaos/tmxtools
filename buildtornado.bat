@@ -1,0 +1,1 @@
+python e:\code\tmxtools\PyInstaller-3.2\PyInstaller-3.2\pyinstaller.py -F -w main.py -p ..\tmxtools

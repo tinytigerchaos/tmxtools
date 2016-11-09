@@ -28,6 +28,7 @@ class GenTmx(object):
 			tu_element.setAttribute('creationdate', self.time)
 			tu_element.setAttribute("creationid", "TMXMALLTOOLS")
 			line = sentence.split(splitmark)
+			# print line[0] + " " +  line[1]
 			if len(line)<2:
 				continue
 			body.appendChild(tu_element)
@@ -35,7 +36,7 @@ class GenTmx(object):
 			tuv1.setAttribute("xml:lang",direction[0])
 			tu_element.appendChild(tuv1)
 			tuv1_sentence_element = doc.createElement('seg')
-			tuv1_sentence = doc.createTextNode(line[0])
+			tuv1_sentence = doc.createTextNode(line[0].replace("\n",''))
 			tuv1.appendChild(tuv1_sentence_element)
 			tuv1_sentence_element.appendChild(tuv1_sentence)
 			tu_element.appendChild(tuv1)
@@ -44,7 +45,7 @@ class GenTmx(object):
 			tuv2.setAttribute("xml:lang", direction[1])
 			tu_element.appendChild(tuv2)
 			tuv2_sentence_element = doc.createElement('seg')
-			tuv2_sentence = doc.createTextNode(line[1])
+			tuv2_sentence = doc.createTextNode(line[1].replace("\n",''))
 			tuv2.appendChild(tuv2_sentence_element)
 			tuv2_sentence_element.appendChild(tuv2_sentence)
 			tu_element.appendChild(tuv2)

@@ -34,8 +34,7 @@ class TxtToTmx(tornado.web.RequestHandler):
 			tarlang = self.get_argument("tarlang")
 			srcpath = self.get_argument("srcpath")
 			splitmark = self.get_argument("splitmark")
-			splitmark = "###T###"
-
+			# splitmark = "\t"
 			gentmx.txttotmx(size,srclang,tarlang,test.readtxt(srcpath),tgtpath,splitmark)
 		except EOFError, e:
 
@@ -171,12 +170,9 @@ class FileRedirect(tornado.web.RequestHandler):
 		filetype = int(self.get_argument("filetype"))
 		if filetype == 1:
 			changedirect.changeDirect(filename,filetype)
-			print "finish"
 			return
 		splitmark = self.get_argument("splitmark")
-		splitmark = "###T###"
 		changedirect.changeDirect(filename,filetype,splitmark)
-		print "finish"
 		return
 app = tornado.web.Application({
 	(r"/tmxtotxt",TmxToTxt),
