@@ -6,15 +6,14 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.css">
-	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap-theme.css">
-	<link rel="stylesheet" href="./fe/render.css">
+	<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap-theme.css">
+	<link rel="stylesheet" href="./render.css">
 
-	<script type="text/javascript" src="./node_modules/requirejs/require.js"></script>
+	<script type="text/javascript" src="../node_modules/requirejs/require.js"></script>
 </head>
 
 <body>
-
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container-fluid">
 			<!-- Brand and toggle get grouped for better mobile display -->
@@ -30,36 +29,13 @@
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<!--<ul class="nav navbar-nav">
-					<li class="active"><a href="#">Link</a></li>
-					<li><a href="#">Link</a></li>
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="#">Action</a></li>
-							<li><a href="#">Another action</a></li>
-							<li><a href="#">Something else here</a></li>
-							<li class="divider"></li>
-							<li><a href="#">Separated link</a></li>
-							<li class="divider"></li>
-							<li><a href="#">One more separated link</a></li>
-						</ul>
-					</li>
-				</ul>
-				<form class="navbar-form navbar-left" role="search">
-					<div class="form-group">
-						<input type="text" class="form-control" placeholder="Search">
-					</div>
-					<button type="submit" class="btn btn-default">Submit</button>
-				</form>-->
 				<ul class="nav navbar-nav navbar-right">
-					<!--<li><a href="#">Link</a></li>-->
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">功能选择 <span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
 							<li class="tmx2txt-action"><a href="#">Tmx 2 Txt</a></li>
 							<li class="txt2tmx-action"><a href="#">Txt 2 Tmx</a></li>
-							<li><a href="#">Something else here</a></li>
+							<li class="file-reoutput-action"><a href="#"> file reoutput </a></li>
 							<li class="divider"></li>
 							<li><a href="#">Separated link</a></li>
 						</ul>
@@ -71,9 +47,8 @@
 		<!-- /.container-fluid -->
 	</nav>
 
-
-
 	<div id="container">
+		<div class="holder"></div>
 		
 		<!--tmx2txt-->
 		<div class="row hidden tmx2txt tools">
@@ -146,9 +121,6 @@
 			</div>
 		</div>
 
-
-
-
 		<!--txt2tmx-->
 		<div class="row hidden txt2tmx tools">
 			<div class="col-md-8 col-md-offset-2">
@@ -215,7 +187,6 @@
 										</label>
 
 										<input type="text" class="form-control" id="tabkey">
-
 									</div>
 								</div>
 							</div>
@@ -233,7 +204,18 @@
 			</div>
 		</div>
 
-
+		<div class="row hidden file-reoutput">
+			<div class="col-md-8 col-md-offset-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Txt转换为Tmx</h3>
+					</div>
+					<div class="panel-body">
+						test code
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 
@@ -250,8 +232,8 @@
 		require.config({
 			baseUrl: '.',
 			paths: {
-				'jquery': './node_modules/jquery/dist/jquery.min',
-				'bootstrap': './node_modules/bootstrap/dist/js/bootstrap.min'
+				'jquery': '../node_modules/jquery/dist/jquery.min',
+				'bootstrap': '../node_modules/bootstrap/dist/js/bootstrap.min'
 			},
 			shim: {
 				'bootstrap': ['jquery']
@@ -261,7 +243,7 @@
 		require(['jquery'], function($){
 			jQuery = $;
 			require(['bootstrap'], function(){
-				require(['./fe/render'], function(render){
+				require(['./render'], function(render){
 					render.init();
 				});
 			});

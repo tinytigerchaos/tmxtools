@@ -13,7 +13,7 @@ define(['require', 'jquery'], function(require, $) {
 	var ipcRender = nodeRequire('electron').ipcRenderer;
 
     $('.txt2tmx-action').unbind('click').click(function () {
-        $('.pythoncode').addClass('hidden');
+        $('.tools').addClass('hidden');
 
         var txt2TmxContainer = $('.txt2tmx').removeClass('hidden');
         // 选择tmx文件路劲
@@ -33,7 +33,6 @@ define(['require', 'jquery'], function(require, $) {
             });
 
             return false;
-
         });
 
         // 选择txt文件路劲

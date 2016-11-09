@@ -1,5 +1,6 @@
 const {ipcMain} = require('electron');
-const httpPost = require('./httppost.js');
+const _http = require('./http.js');
+let port = 8888;
 
 /**
  * 负责接收前台页面发出处理文件的请求，并将相关参数转发到后台服务（tarnado）
@@ -11,10 +12,11 @@ ipcMain.on('tmx2txt', function (event, params, callbackName) {
 
 	var options = {
 		path: 'tmxtotxt',
-		params: params
+		params: params,
+		port: port
 	}
 
-	httpPost(options, function(res){
+	_http.httpPost(options, function(res){
 		originEvent.sender.send(callbackName, res);
 	});
 });
@@ -24,14 +26,16 @@ ipcMain.on('txt2tmx', function (event, params, callbackName) {
 	var originEvent = event;
 
 	var options = {
-		hostname: 'localhost',
-		port: 8888,
 		path: 'txttotmx',
-		method: 'POST',
-		params: params
+		params: params,
+		port: port
 	}
 
-	httpPost(options, function(res){
+	_http.httpPost(options, function(res){
 		originEvent.sender.send(callbackName, res);
 	});
-})
+});
+
+module.exports = function setPort(currentPort){
+	port = currentPort;
+}
