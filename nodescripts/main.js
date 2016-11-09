@@ -1,7 +1,10 @@
-const {app, BrowserWindow} = require('electron')
 const electron = require('electron')
+const {app, BrowserWindow} = require('electron')
+const path = require('path')
 
-const childProcess = require('child_process');
+const tarnodoService = require('./tarnodoService.js')
+
+let port;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -12,16 +15,14 @@ function createWindow() {
 	win = new BrowserWindow({ width: 1200, height: 600 })
 
 	// and load the index.html of the app.
-	win.loadURL(`file://${__dirname}/index.html`)
+	let dirname = path.dirname(__dirname) + '/fe';
+
+	win.loadURL(`file://${dirname}/index.html`)
 
 	// Open the DevTools.
 	win.webContents.openDevTools()
 
 	// TODO: 注册全局快捷键
-
-	// 开始python webContents服务
-
-	//  childProcess.exec('./python/pyth')
 
 	// Emitted when the window is closed.
 	win.on('closed', () => {
@@ -35,7 +36,12 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', function(){
+	tarnodoService.start(function(newport){
+		port = newport;
+		createWindow();
+	});
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -44,6 +50,7 @@ app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit()
 	}
+	tarnodoService.stop(port);
 })
 
 app.on('activate', () => {
@@ -56,6 +63,5 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-
-require('./nodescripts/common.js');
-require('./nodescripts/bridge.js');
+require('./common.js');
+require('./bridge.js')(port);

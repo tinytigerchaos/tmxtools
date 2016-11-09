@@ -1,14 +1,14 @@
 {
   "name": "tmxtools",
   "version": "0.1.0",
-  "main": "main.js",
+  "main": "./nodescripts/main.js",
   "devDependencies": {
+    "electron-packager": "^8.2.0",
     "electron-windows-installer": "^1.4.4"
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
     "jquery": "^3.1.1",
-    "requirejs": "^2.3.2",
-    "seajs": "^3.0.2"
+    "requirejs": "^2.3.2"
   }
 }
