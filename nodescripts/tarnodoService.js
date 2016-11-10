@@ -1,6 +1,7 @@
 const childProcess = require('child_process');
 const fs = require('fs');
 const _http = require('./http.js');
+const path = require('path');
 
 function start( callback ){
     /**
@@ -10,13 +11,15 @@ function start( callback ){
 
     // 删除port文件
     try {
-        fs.unlinkSync('../fe/port.txt');
-    } catch (error) {console.log(error);}
+        fs.unlinkSync('./port.txt');
+    } catch (error) {
+        console.log('port文件不存在');
+    }
 
     let checkTimer; // 检查服务是否已启动
 
     // 开始服务，执行main.exe文件
-    let startProcess = childProcess.spawn('../main.exe');
+    let startProcess = childProcess.spawn(path.dirname(__dirname) + '/main.exe', ['']);
     startProcess.stdout.on('data', function(data){
         console.log('data: ' + data.toString());
     });
@@ -36,7 +39,7 @@ function start( callback ){
     // 轮训检查port文件是否已经创建成功
     checkTimer = setInterval(function(){
         try {
-            var port = parseInt(fs.readFileSync('../fe/port.txt').toString());
+            var port = parseInt(fs.readFileSync('./port.txt').toString());
             if(!isNaN(port) && port > 0) {
                 // 说明检测到端口已启动成功
                 clearInterval(checkTimer);
@@ -53,7 +56,7 @@ function start( callback ){
 }
 
 function stop(port){
-    _http.httpGet('http://localhost:' + port + '/quit', function(result){
+    _http.get('http://localhost:' + port + '/quit', function(result){
         console.log(result)
     });
 }

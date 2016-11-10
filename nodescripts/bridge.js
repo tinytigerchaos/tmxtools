@@ -16,7 +16,7 @@ ipcMain.on('tmx2txt', function (event, params, callbackName) {
 		port: port
 	}
 
-	_http.httpPost(options, function(res){
+	_http.post(options, function(res){
 		originEvent.sender.send(callbackName, res);
 	});
 });
@@ -31,7 +31,7 @@ ipcMain.on('txt2tmx', function (event, params, callbackName) {
 		port: port
 	}
 
-	_http.httpPost(options, function(res){
+	_http.post(options, function(res){
 		originEvent.sender.send(callbackName, res);
 	});
 });
